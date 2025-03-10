@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Phaser Game</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Phaser library -->
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+</head>
+<body>
+    <div id="game-container"></div>
+    <div id="login-container">
+        <h1>Spotify Phaser Game</h1>
+        <p>Connect your Spotify account to play</p>
+        <button id="login-button">Log in with Spotify</button>
+    </div>
+    
+    <!-- Game scenes -->
+    <script src="src/scenes/MainScene.js"></script>
+    <script src="src/scenes/GameScene.js"></script>
+    
+    <!-- Game initialization -->
+    <script src="src/index.js"></script>
+    
+    <!-- Authentication handling -->
+    <script src="main.js"></script>
+</body>
+</html>
