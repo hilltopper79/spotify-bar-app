@@ -1,5 +1,4 @@
-// src/index.js - Game initialization file
-
+// src/index.js
 async function initializeGame() {
     // Get the Spotify access token
     const accessToken = localStorage.getItem('spotify_access_token');
@@ -8,7 +7,8 @@ async function initializeGame() {
     let spotifyData = {
         user: null,
         topTracks: null,
-        topArtists: null
+        topArtists: null,
+        recommendations: null
     };
     
     // Try to fetch Spotify data
@@ -16,6 +16,7 @@ async function initializeGame() {
         spotifyData.user = await fetchUserProfile(accessToken);
         spotifyData.topTracks = await fetchTopTracks(accessToken);
         spotifyData.topArtists = await fetchTopArtists(accessToken);
+        // We'll fetch recommendations in the Bar2Scene to keep the initial load faster
         
         console.log('Spotify data loaded:', spotifyData);
     } catch (error) {
@@ -36,78 +37,21 @@ async function initializeGame() {
             }
         },
         scene: [
-            MainScene,
-            GameScene
+            BootScene,
+            PreloadScene,
+            MainMenuScene,
+            StreetScene,
+            Bar1Scene,
+            Bar2Scene,
+            LoadingScene
         ]
     };
     
     // Initialize the game
     const game = new Phaser.Game(config);
     
-    // Start with the main scene and pass in Spotify data
-    game.scene.start('MainScene', { spotifyData });
+    // Pass data to the boot scene
+    game.registry.set('spotifyData', spotifyData);
     
     return game;
 }
-
-// Helper functions to fetch Spotify data
-
-async function fetchUserProfile(accessToken) {
-    const response = await fetch(`/api/user-profile?access_token=${accessToken}`);
-    
-    if (!response.ok) {
-        throw new Error('Failed to fetch user profile');
-    }
-    
-    return await response.json();
-}
-
-async function fetchTopTracks(accessToken) {
-    try {
-        const response = await fetch(`/api/top-tracks?access_token=${accessToken}`);
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch top tracks');
-        }
-        
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching top tracks:', error);
-        // Fallback to mock data if API fails
-        return [
-            {
-                name: "Bohemian Rhapsody",
-                artists: [{ name: "Queen" }],
-                album: { name: "A Night at the Opera" }
-            },
-            {
-                name: "Billie Jean",
-                artists: [{ name: "Michael Jackson" }],
-                album: { name: "Thriller" }
-            }
-        ];
-    }
-}
-
-async function fetchTopArtists(accessToken) {
-    try {
-        const response = await fetch(`/api/top-artists?access_token=${accessToken}`);
-        
-        if (!response.ok) {
-            throw new Error('Failed to fetch top artists');
-        }
-        
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching top artists:', error);
-        // Fallback to mock data if API fails
-        return [
-            { name: "Queen", genres: ["rock", "classic rock"] },
-            { name: "Michael Jackson", genres: ["pop", "dance pop"] }
-        ];
-    }
-}
-
-// Export the function (for when we set up a build system)
-// For now, we'll call this from main.js
-window.initializeGame = initializeGame;
